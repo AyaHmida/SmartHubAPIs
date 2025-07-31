@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "9g2K2lJz/vZyZvY30zg7ZdBVTuj+ZWf72YjHr2YCKNQ=",
+  "Source": "SmartHomeHub.API",
+  "BasePath": "_content/SmartHomeHub.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
