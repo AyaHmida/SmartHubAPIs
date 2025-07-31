@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using SmartHomeHub.API.Data;
 using SmartHomeHub.API.Entites;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +12,7 @@ using SmartHomeHub.API.Helpers.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SmartHomeHub.API.Helpers;
+using Microsoft.OpenApi.Models;
 
 
 
@@ -42,9 +43,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 
-builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>(); 
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IHousesService, HousesService>();
+builder.Services.AddScoped<IHousesRepository, HousesRepository>();
 
-
+//auth token
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -63,6 +66,38 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = config["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]))
     };
+});
+builder.Services.AddAuthorization();
+// pour affiche le button   "Authorize" dans swagger
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SmartHome API", Version = "v1" });
+
+    // 🔐 Ajouter la sécurité JWT
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Entrez 'Bearer' suivi du token JWT"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 var app = builder.Build();
 
