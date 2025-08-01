@@ -13,11 +13,10 @@ namespace SmartHomeHub.API.Services.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
 
-        private readonly IUserRepository _userRepo;
         private readonly IJwtTokenGenerator _tokenGenerator;
         public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher, IUserRepository userRepo, IJwtTokenGenerator tokenGenerator)
         {
-            _userRepo = userRepository;
+            _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _tokenGenerator = tokenGenerator; 
 
@@ -45,7 +44,7 @@ namespace SmartHomeHub.API.Services.Implementations
 
         public async Task<LoginResponseDTO> LoginAsync(LoginRequestDTO request)
         {
-            var user = await _userRepo.GetByEmailAsync(request.Email);
+            var user = await _userRepository.GetByEmailAsync(request.Email);
             if (user == null)
                 throw new UnauthorizedAccessException("Invalid credentials");
 
