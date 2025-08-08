@@ -1,10 +1,13 @@
 ﻿using DevAPI.DTOs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using SmartHomeHub.API.Dtos;
 using SmartHomeHub.API.Entites;
 using SmartHomeHub.API.Helpers.Interfaces;
 using SmartHomeHub.API.Repositories.Interfaces;
 using SmartHomeHub.API.Services.Interfaces;
+using AppEmailSender = SmartHomeHub.API.Helpers.Interfaces.IEmailSender;
+
 
 namespace SmartHomeHub.API.Services.Implementations
 {
@@ -13,12 +16,19 @@ namespace SmartHomeHub.API.Services.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
 
+
         private readonly IJwtTokenGenerator _tokenGenerator;
-        public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher, IUserRepository userRepo, IJwtTokenGenerator tokenGenerator)
+        private readonly AppEmailSender _emailSender;
+
+        public UserService(IUserRepository userRepository, 
+            IPasswordHasher<User> passwordHasher, IUserRepository userRepo, 
+            IJwtTokenGenerator tokenGenerator, AppEmailSender emailSender)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
-            _tokenGenerator = tokenGenerator; 
+            _tokenGenerator = tokenGenerator;
+            _emailSender = emailSender;
+
 
         }
         public async Task RegisterAsync(UserRegisterDto dto)
@@ -35,7 +45,7 @@ namespace SmartHomeHub.API.Services.Implementations
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email,
-                PasswordHash = _passwordHasher.HashPassword(null, dto.Password),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Role = dto.Role
             };
 
@@ -48,9 +58,9 @@ namespace SmartHomeHub.API.Services.Implementations
             if (user == null)
                 throw new UnauthorizedAccessException("Invalid credentials");
 
-            var result = _passwordHasher.VerifyHashedPassword(null, user.PasswordHash, request.Password);
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
-            if (result == PasswordVerificationResult.Failed)
+            if (!isPasswordValid)
                 throw new UnauthorizedAccessException("Invalid credentials");
 
             var token = _tokenGenerator.GenerateToken(user);
@@ -61,6 +71,35 @@ namespace SmartHomeHub.API.Services.Implementations
                 Email = user.Email,
                 Role = user.Role.ToString()
             };
+        }
+
+        public async Task<bool> ForgotPasswordAsync(string email)
+        {
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null) return false;
+
+            var token = Guid.NewGuid().ToString();
+            var expiry = DateTime.UtcNow.AddMinutes(30);
+
+            await _userRepository.SaveResetTokenAsync(user.Id, token, expiry);
+
+            var link = $"https://smarthomehub.com/reset-password?token={token}";
+            var message = $"To reset your password, click the link below:\n{link}\nThis link will expire in 30 minutes.";
+
+            await _emailSender.SendEmailAsync(email, "Reset Your Password", message);
+
+            return true;
+        }
+
+        public async Task<bool> ResetPasswordAsync(string token, string newPassword)
+        {
+            var user = await _userRepository.GetByResetTokenAsync(token);
+            if (user == null) return false;
+
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _userRepository.UpdatePasswordAsync(user.Id, passwordHash);
+
+            return true;
         }
     }
 }

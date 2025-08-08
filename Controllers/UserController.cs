@@ -58,6 +58,20 @@ namespace SmartHomeHub.API.Controllers
                 return Unauthorized("Email or password is incorrect.");
             }
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            var result = await _userService.ForgotPasswordAsync(request.Email);
+            return result ? Ok("Reset email sent.") : BadRequest("User not found.");
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var result = await _userService.ResetPasswordAsync(request.Token, request.NewPassword);
+            return result ? Ok("Password updated.") : BadRequest("Invalid or expired token.");
+        }
     }
 
 }

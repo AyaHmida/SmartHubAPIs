@@ -1,4 +1,4 @@
-﻿using SmartHomeHub.API.Entites;
+﻿using SmartHomeHub.API.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace DevAPI.DTOs

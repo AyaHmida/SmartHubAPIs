@@ -46,6 +46,11 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IHousesService, HousesService>();
 builder.Services.AddScoped<IHousesRepository, HousesRepository>();
+builder.Services.AddScoped<IDeviceService, DeviceService>();
+builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+
 
 //auth token
 builder.Services.AddAuthentication(options =>

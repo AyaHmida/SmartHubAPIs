@@ -11,5 +11,7 @@ namespace SmartHomeHub.API.Data
                     : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<House> Houses { get; set; }
+        public DbSet<Device> Devices { get; set; }
+
     }
 }
