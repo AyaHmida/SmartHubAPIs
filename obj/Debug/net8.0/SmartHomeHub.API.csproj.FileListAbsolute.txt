@@ -172,4 +172,9 @@ C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\obj\Debug\net8.0\refi
 C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\obj\Debug\net8.0\SmartHomeHub.API.pdb
 C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\obj\Debug\net8.0\SmartHomeHub.API.genruntimeconfig.cache
 C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\obj\Debug\net8.0\ref\SmartHomeHub.API.dll
+C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\bin\Debug\net8.0\MailKit.dll
+C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\bin\Debug\net8.0\MimeKit.dll
+C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\HP\source\repos\SmartHomeHub.API\SmartHomeHub.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

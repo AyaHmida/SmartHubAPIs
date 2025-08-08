@@ -27,5 +27,31 @@ namespace SmartHomeHub.API.Repositories.Implementations
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        public async Task<User?> GetByResetTokenAsync(string token)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.ResetToken == token && u.ResetTokenExpiry > DateTime.UtcNow);
+        }
+        public async Task SaveResetTokenAsync(int userId, string token, DateTime expiry)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return;
+
+            user.ResetToken = token;
+            user.ResetTokenExpiry = expiry;
+
+            await _context.SaveChangesAsync();
+        }
+        public async Task UpdatePasswordAsync(int userId, string passwordHash)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return;
+
+            user.PasswordHash = passwordHash;
+            user.ResetToken = null;
+            user.ResetTokenExpiry = null;
+
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

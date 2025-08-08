@@ -1,4 +1,5 @@
 ﻿using DevAPI.Entities;
+using SmartHomeHub.API.Enums;
 
 namespace SmartHomeHub.API.Entites
 {
@@ -9,6 +10,10 @@ namespace SmartHomeHub.API.Entites
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public UserRole Role { get; set; }
+
+
+        public string? ResetToken { get; set; }
+        public DateTime? ResetTokenExpiry { get; set; }
 
     }
 }
